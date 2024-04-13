@@ -5,6 +5,7 @@ use App\Models\User;
 use App\Models\Post;
 use Illuminate\Support\Facades\Request;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PostController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +22,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
- Route::get('/dashboard', [UserController::class, 'index']);
 
-Route::resource('/users', UserController::class);
+Route::get('/users', [UserController::class, 'index']);
+Route::get('/user/{id}', [UserController::class, 'show']);
+Route::post('/users', [UserController::class, 'store']);
+Route::resource('/posts', PostController::class);

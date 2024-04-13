@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Post;
 
 class PostController extends Controller
 {
@@ -13,7 +14,10 @@ class PostController extends Controller
      */
     public function index()
     {
-        //
+        $posts = Post::with('category')->get();
+
+        return $posts;
+
     }
 
     /**
@@ -45,7 +49,14 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        //
+        $posts = Post::with('category')->where('id', $id)->first();
+
+        // foreach($posts as $post) {
+        //     return $post;
+        // }
+        // return $post;
+
+        // return 'Category:' . $post->category->name . ' Post: ' . $post->name;
     }
 
     /**
