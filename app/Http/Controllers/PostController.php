@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Post;
+use App\Models\Category;
+ 
 
 class PostController extends Controller
 {
@@ -14,9 +17,14 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::with('category')->get();
+        $posts = Post::with('category','user')->orderBy('id', 'desc')->paginate(10);
 
-        return $posts;
+        // return $posts;
+
+        // return view('posts.list')->with('posts', $posts);
+        // return view('posts.list', ['posts' => $posts]);
+        return view('posts.list', compact('posts'));
+
 
     }
 
@@ -27,7 +35,8 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        $categories = Category::all();
+        return view('posts.create', compact('categories'));
     }
 
     /**
@@ -38,7 +47,15 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $post = new Post;
+        $post->fill($request->all());
+        $post->user_id = Auth::id();
+        $post->category_id = $request->category_id;
+        $post->save();
+
+        return redirect('/posts');
+        // $post->name = $request->name;
+        // $post->description = $request->description;
     }
 
     /**
@@ -49,9 +66,13 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        $posts = Post::with('category')->where('id', $id)->first();
+        $post = Post::with('category','user')->where('id', $id)->first();
 
-        // foreach($posts as $post) {
+        return view('posts.show', compact('post'));
+
+
+
+        // foreach($posts as $post) {   
         //     return $post;
         // }
         // return $post;
@@ -67,7 +88,9 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-        //
+        $post = Post::find($id);
+        $categories = Category::all();
+        return view('posts.edit', compact('post', 'categories'));
     }
 
     /**
@@ -79,7 +102,13 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $post = Post::find($id);
+        $post->fill($request->all());
+        $post->user_id = Auth::id();
+        $post->category_id = $request->category_id;
+        $post->save();
+
+        return redirect('/posts');
     }
 
     /**
@@ -90,6 +119,9 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $post = Post::find($id);
+        $post->delete();
+        return redirect('/posts');
+
     }
 }
